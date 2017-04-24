@@ -49,14 +49,18 @@ void to_char_format(char *line) {
     // col
     while (col_num != 0) {
         rem = col_num % 26;  // 55 % 26 = 3, 2 % 3 = 3
-        if (rem != 0) {
-            col[c_counter++] = rem + 64;
+        if (rem == 0) {
+            col[c_counter++] = 'Z';   
+            col_num = col_num / 26;
+            col_num -= 1;
         } else {
-            // rem = 0 -> 'Z'
-            col[c_counter++] = 'Z';
+            col[c_counter++] = rem + 64;
+            col_num = col_num / 26;  // 55 / 26 = 3
         }
-        col_num = col_num / 26;  // 55 / 26 = 2
+        
+
     }
+    
     col[c_counter] = '\0';
     int col_len = c_counter;
     c_counter--;
@@ -70,14 +74,13 @@ void to_char_format(char *line) {
 
 void to_RC_format(char *line) {
     // read: BC23 -> R23C55
-    int i_counter = 0, o_counter = 0, r_counter = 0, c_counter = 0;
+    int i_counter = 0, o_counter = 0, r_counter = 0, c_counter = 0, i = 0;
     int col_num = 0, quo, rem;
-    char row[10], col[10];
+    char row[10], col[10], rev_col[10];
     while(!(line[i_counter] >= 48 && line[i_counter] <= 57)) {
         col_num *= 26;
         col_num += line[i_counter++] - 64;
     }
-    
     quo = col_num;
     while(quo != 0) {
         rem = quo % 10;  // 55 % 10 = 5, 5 % 5 = 5
@@ -85,6 +88,11 @@ void to_RC_format(char *line) {
         quo = quo / 10;  // 55 / 10 = 5
     }
     col[c_counter] = '\0';
+    while (i < c_counter) {
+        rev_col[i] = col[c_counter - i - 1];
+        i++;
+    }
+    rev_col[i] = '\0';
     // row
     while (i_counter < str_len) {
         row[r_counter++] = line[i_counter++];
@@ -95,5 +103,5 @@ void to_RC_format(char *line) {
     strcat(output, row);
     // col
     strcat(output, "C");
-    strcat(output, col);
+    strcat(output, rev_col);
 }
