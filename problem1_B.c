@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<string.h>
+#include <stdio.h>
+#include <string.h>
 
 void to_char_format(char *line);
 void to_RC_format(char *line);
@@ -9,22 +9,38 @@ int main() {
     int input_num, counter = 0;
     // get the numbers of input.
     scanf("%d", &input_num);
+    // compile regular expression
     while(counter < input_num) {
         char line[20];
+        int is_char_format = 0, state = 0, i = 0;
         scanf("%s", line);  // read a new line
         str_len = strlen(line);
-        //First character decides which numeration system should use.
+        // execute regex
         if (line[0] == 'R') {
-            to_char_format(line);
+            state = 1;
+        } 
+        if (state == 1) {
+            for (i = 0; i < str_len; i++) {
+                if (line[i] >= '0' && line[i] <= '9') {
+                    state = 2;
+                    continue;
+                } 
+                if (state == 2 && line[i] == 'C') {
+                    state = 3;
+                    break;
+                }
+            }
+        }
+        if (state != 3) {
+            to_RC_format(line);
             printf("%s\n", output);
         } else {
-            to_RC_format(line);
+            to_char_format(line);
             printf("%s\n", output);
         }
         counter++;
     }
     
-
     return 0;
 }
 
@@ -77,7 +93,7 @@ void to_RC_format(char *line) {
     int i_counter = 0, o_counter = 0, r_counter = 0, c_counter = 0, i = 0;
     int col_num = 0, quo, rem;
     char row[10], col[10], rev_col[10];
-    while(!(line[i_counter] >= 48 && line[i_counter] <= 57)) {
+    while(!(line[i_counter] >= '0' && line[i_counter] <= '9')) {
         col_num *= 26;
         col_num += line[i_counter++] - 64;
     }
